@@ -1,8 +1,17 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: © 2021 Massachusetts Institute of Technology.
+# SPDX-FileCopyrightText: © 2021 Lee McCuller <mcculler@mit.edu>
+# NOTICE: authors should document their contributions in concisely in NOTICE
+# with details inline in source files, comments, and docstrings.
 """
-"""
-from __future__ import division, print_function, unicode_literals
+this is indended to set up notebooks a particular way using
 
+```python
+from wavestate.utilities.ipynb.displays import *
+```
+"""
 import IPython
 _ip = IPython.get_ipython()
 
@@ -10,7 +19,7 @@ if _ip is not None:
     _ip.magic("load_ext autoreload")
     _ip.magic("autoreload 2")
 
-    #if this is run from the console then inline can't be found. This hack seems to get around it
+    # if this is run from the console then inline can't be found. This hack seems to get around it
     try:
         import ipykernel.pylab.backend_inline
         backend = ipykernel.pylab.backend_inline.InlineBackend.instance()
@@ -21,7 +30,7 @@ if _ip is not None:
     except Exception:
         _ip.magic("matplotlib")
         _ip.magic("pylab")
-    #mpl.use('GTK3Cairo')
+    # mpl.use('GTK3Cairo')
 
 import numpy as np
 import matplotlib as mpl

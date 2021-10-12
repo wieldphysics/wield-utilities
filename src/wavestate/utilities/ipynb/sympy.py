@@ -1,11 +1,22 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: © 2021 Massachusetts Institute of Technology.
+# SPDX-FileCopyrightText: © 2021 Lee McCuller <mcculler@mit.edu>
+# NOTICE: authors should document their contributions in concisely in NOTICE
+# with details inline in source files, comments, and docstrings.
 """
+this is indended to set up notebooks a particular way using
+
+```python
+from wavestate.utilities.ipynb.sympy import *
+```
 """
-from __future__ import division, print_function, unicode_literals
 import sympy
 print("Sympy version: ", sympy.__version__)
 
-#this makes the notebook sexy
+
+# this makes the notebook nice
 sympy.init_printing(use_latex='mathjax')
 
 

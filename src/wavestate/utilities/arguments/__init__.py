@@ -1,9 +1,12 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: © 2021 Massachusetts Institute of Technology.
+# SPDX-FileCopyrightText: © 2021 Lee McCuller <mcculler@mit.edu>
+# NOTICE: authors should document their contributions in concisely in NOTICE
+# with details inline in source files, comments, and docstrings.
 """
 """
-from __future__ import division, print_function, unicode_literals
-import declarative
-
 from .base import (
     ArgumentError,
     grab_kwargs,
@@ -19,9 +22,6 @@ from .pyargparse import (
 from .aid import HintAid
 
 from . import logging
-
-kw_hints = declarative.Bunch()
-#kw_hints.update(logging.kw_hints)
 
 __all__ = [
     kwdict_argparse,

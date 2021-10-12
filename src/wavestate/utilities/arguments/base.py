@@ -1,12 +1,16 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: © 2021 Massachusetts Institute of Technology.
+# SPDX-FileCopyrightText: © 2021 Lee McCuller <mcculler@mit.edu>
+# NOTICE: authors should document their contributions in concisely in NOTICE
+# with details inline in source files, comments, and docstrings.
 """
 """
-from __future__ import division, print_function, unicode_literals
 import declarative
 import numpy as np
-from declarative.utilities.future_from_2 import unicode
 
-from IIRrational.utilities import args
+from ..utilities import args
 
 
 class ArgumentError(ValueError):
@@ -14,7 +18,7 @@ class ArgumentError(ValueError):
 
 
 def mapcheck_bool(aid, aname, val):
-    if isinstance(val, (str, unicode)):
+    if isinstance(val, str):
         if val.lower() in ['true', 'yes', '1']:
             val = True
         elif val.lower() in ['false', 'no', '0']:
@@ -44,7 +48,7 @@ def mapcheck_positive_float(aid, aname, val):
 
 
 def mapcheck_positive_float_orNone(aid, aname, val):
-    if isinstance(val, (str, unicode)):
+    if isinstance(val, str):
         if val.lower() in ['none', 'null']:
             val = None
     if val is None:
@@ -71,7 +75,7 @@ def mapcheck_positive_int(aid, aname, val):
             "argument {}={} must be an integer"
         ).format(aname, val))
 
-    #TODO error reporting
+    # TODO error reporting
     if not (val > 0):
         raise ArgumentError((
             "argument {}={} must be positive"
@@ -91,7 +95,7 @@ def mapcheck_nonnegative_int(aid, aname, val):
             "argument {}={} must be an integer"
         ).format(aname, val))
 
-    #TODO error reporting
+    # TODO error reporting
     if not (val >= 0):
         raise ArgumentError((
             "argument {}={} must be non-negative"
@@ -104,7 +108,7 @@ def mapcheck_nonnegative_int(aid, aname, val):
 
 
 def mapcheck_positive_int_orNone(aid, aname, val):
-    if isinstance(val, (str, unicode)):
+    if isinstance(val, str):
         if val.lower() in ['none', 'null']:
             val = None
     if val is None:
@@ -113,7 +117,7 @@ def mapcheck_positive_int_orNone(aid, aname, val):
 
 
 def mapcheck_nonnegative_int_orNone(aid, aname, val):
-    if isinstance(val, (str, unicode)):
+    if isinstance(val, str):
         if val.lower() in ['none', 'null']:
             val = None
     if val is None:
@@ -122,7 +126,7 @@ def mapcheck_nonnegative_int_orNone(aid, aname, val):
 
 
 def mapcheck_int_orNone(aid, aname, val):
-    if isinstance(val, (str, unicode)):
+    if isinstance(val, str):
         if val.lower() in ['none', 'null']:
             val = None
     if val is None:
@@ -145,7 +149,7 @@ def grab_kwarg_hints(aid, kw, kwdesc, kwput = None):
         found = _grab_kwargs(aid, kw, kwmeta, hint_name, kwput = kwput)
         if found:
             aid.hint_setdefault(hint_name, next(iter(found.values())))
-        #TODO, make better error message for case when default is not given
+        # TODO, make better error message for case when default is not given
         try:
             default = kwmeta['default']
         except KeyError:
@@ -165,7 +169,7 @@ def grab_kwargs(aid, kw, kwdesc, argname, kwput = None):
     if found:
         return next(iter(found.values()))
 
-    #TODO, make better error message for case when default is not given
+    # TODO, make better error message for case when default is not given
     default = kwmeta['default']
     if callable(default):
         default = default(aid, argname)
@@ -186,7 +190,7 @@ def _grab_kwargs(aid, kw, kwmeta, argname, kwput = None):
     pop = kwmeta.get('pop', True)
     mapcheck = kwmeta.get('mapcheck', None)
     found = {}
-    #use a list to modify it from the function
+    # use a list to modify it from the function
     discrepancy = [False]
 
     def check_find(aname):

@@ -1,16 +1,18 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""
-"""
-from __future__ import division, print_function, unicode_literals
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: © 2021 Massachusetts Institute of Technology.
+# SPDX-FileCopyrightText: © 2021 Lee McCuller <mcculler@mit.edu>
+# NOTICE: authors should document their contributions in concisely in NOTICE
+# with details inline in source files, comments, and docstrings.
 import sys
 import time
 import logging
 
 import contextlib
 import declarative
-from declarative.utilities.future_from_2 import str, unicode
 
-from IIRrational.utilities.strings import padding_remove
+from ..utilities.strings import padding_remove
 
 
 class HintAid(object):
@@ -35,18 +37,18 @@ class HintAid(object):
         self.hints = usehints
         self.hints_seen = hints_seen
 
-        #holds a heading for the logging, as well as sets tabbing
+        # holds a heading for the logging, as well as sets tabbing
         self.log_header_stack = ()
-        #indicates how far into the header has been printed yet.
-        #for the live log
+        # indicates how far into the header has been printed yet.
+        # for the live log
         self.log_header_printed = 0
 
-        #log entries
+        # log entries
         self._logs = []
         self.log_number = 0
         return
 
-    #def hint_set(self, hname, hval, default = False):
+    # def hint_set(self, hname, hval, default = False):
     #    if default:
     #        self.hints.setdefault(hname, hval)
     #    else:
@@ -74,7 +76,7 @@ class HintAid(object):
             else:
                 superarg.append(arg)
 
-        #helper for when the known keys are being indexed
+        # helper for when the known keys are being indexed
         if self.hints_seen is not None:
             keys_remapped = [key.format(**kwargs) for key in superarg]
             for idx, key in enumerate(keys_remapped):
@@ -106,8 +108,8 @@ class HintAid(object):
         else:
             level = -1
             group = kwargs.setdefault('group', 'debug')
-            #TODO print line and file upon hint request
-            #args = args
+            # TODO print line and file upon hint request
+            # args = args
 
         header = self.log_header_stack
         kwargs['header'] = header
@@ -118,13 +120,13 @@ class HintAid(object):
             return
 
         kwargs['args'] = args
-        #TODO, merge if consecutive with the same parameters
+        # TODO, merge if consecutive with the same parameters
         self._logs.append(
             kwargs
         )
         self.log_number += 1
 
-        #FOR LIVE PRINTING
+        # FOR LIVE PRINTING
         if group == 'info':
             log_mod_level = logging.INFO
             group_character = 'I'
@@ -187,7 +189,7 @@ class HintAid(object):
                 '  ' * header_len
             )
 
-            #TODO, make these take a header argument
+            # TODO, make these take a header argument
             if not self.hint('logging_use', default = False):
                 def pfunc(*args, **kwargs):
                     print(*args, **kwargs)
@@ -205,7 +207,7 @@ class HintAid(object):
                     file = lfile
                 )
                 self.log_header_printed = header_len
-                #tag that the header has been printed
+                # tag that the header has been printed
 
             hint_log_stderr = self.hint('log_stderr', default = True)
             if hint_log_stderr and group == 'warn':
@@ -218,7 +220,7 @@ class HintAid(object):
 
             arg_lines = [[]]
             for arg in args:
-                if isinstance(arg, (str, unicode)):
+                if isinstance(arg, str):
                     if '\n' in arg:
                         arg = padding_remove(arg)
                     arg_spl = arg.split('\n')
@@ -228,7 +230,7 @@ class HintAid(object):
                 else:
                     arg_lines[-1].append(arg)
 
-            #TODO, have pfunc do this splitting
+            # TODO, have pfunc do this splitting
             pfunc(
                 prefix, *arg_lines[0],
                 file = lfile
@@ -268,7 +270,7 @@ class HintAid(object):
     def log_heading(self, header):
         save_stack = self.log_header_stack
         self.log_header_stack = save_stack + (header,)
-        #TODO, auto print header on command?
+        # TODO, auto print header on command?
         yield
         self.log_header_stack = save_stack
         if self.log_header_printed > len(save_stack):
