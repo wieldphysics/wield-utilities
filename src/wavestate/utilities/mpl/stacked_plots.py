@@ -1,7 +1,12 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: © 2021 Massachusetts Institute of Technology.
+# SPDX-FileCopyrightText: © 2021 Lee McCuller <mcculler@mit.edu>
+# NOTICE: authors should document their contributions in concisely in NOTICE
+# with details inline in source files, comments, and docstrings.
 """
 """
-from __future__ import division, print_function, unicode_literals
 import matplotlib as mpl
 from matplotlib import gridspec
 import matplotlib.pyplot as plt
@@ -9,7 +14,7 @@ import declarative
 
 from .autoniceplot import (
     asavefig,
-    patch_axes,
+    # patch_axes,
 )
 
 
@@ -21,10 +26,12 @@ def hide_xlabels(ax):
 def attach_finalizer(ax):
     ax.finalizers = []
     ax.finalized = False
+
     def finalize():
         ax.finalized = True
         for f in ax.finalizers:
             f()
+
     ax.finalize = finalize
     return
 
@@ -92,7 +99,6 @@ def generate_stacked_plot_ax(
     if fig is None:
         fig = plt.figure()
         fig.set_size_inches(width_phys_in, height_phys_in)
-        #fig.set_dpi(160)
 
     def hide_finalizer(axB, ax_local):
         def finalize():
@@ -116,7 +122,7 @@ def generate_stacked_plot_ax(
         ax_list = []
         for idx, name in enumerate(view_names):
             ax_local  = fig.add_subplot(gs_DC[idx, col_idx], sharex = ax_top)
-            #patch_axes(ax_local)
+            # patch_axes(ax_local)
             ax_local.grid(b=True)
             ax_local.grid(b=True, which = 'minor', color = (.9, .9, .9), lw = .5)
             axB['ax{0}_{1}'.format(idx, col_idx)] = ax_local

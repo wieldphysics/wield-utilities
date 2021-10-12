@@ -1,8 +1,12 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: © 2021 Massachusetts Institute of Technology.
+# SPDX-FileCopyrightText: © 2021 Lee McCuller <mcculler@mit.edu>
+# NOTICE: authors should document their contributions in concisely in NOTICE
+# with details inline in source files, comments, and docstrings.
 """
 """
-from __future__ import division, print_function, unicode_literals
-
 from .any_io import (
     load_any,
     write_any,
@@ -40,3 +44,17 @@ def load(fname, ftype = None):
         fname = typeB.fname,
         ftype = ftype,
     )
+
+
+__all__ = [
+    'load_any',
+    'write_any',
+    'load_csv',
+    'type2type',
+    'ext2type',
+    'type2features',
+    'determine_type',
+    'subkey_search',
+    'save',
+    'load',
+]

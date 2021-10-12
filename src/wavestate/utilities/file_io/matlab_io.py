@@ -1,7 +1,12 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: © 2021 Massachusetts Institute of Technology.
+# SPDX-FileCopyrightText: © 2021 Lee McCuller <mcculler@mit.edu>
+# NOTICE: authors should document their contributions in concisely in NOTICE
+# with details inline in source files, comments, and docstrings.
 """
 """
-from __future__ import division, print_function, unicode_literals
 import numpy as np
 
 
@@ -41,7 +46,7 @@ def load_matlab(fname):
         mdict = d,
         squeeze_me = True,
         chars_as_strings = True,
-        #mat_dtype = True,
+        # mat_dtype = True,
     )
     d = squeezerec(None, d)
     d.pop('__globals__', None)
@@ -54,7 +59,7 @@ def desqueezerec(key, obj):
     if obj is None:
         return np.array([])
     elif isinstance(obj, dict):
-        #convert to recarray?
+        # convert to recarray?
         for k, v in list(obj.items()):
             obj[k] = desqueezerec(k, v)
         return obj

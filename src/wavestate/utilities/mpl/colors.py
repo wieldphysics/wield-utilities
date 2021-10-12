@@ -1,18 +1,15 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: © 2021 Massachusetts Institute of Technology.
+# SPDX-FileCopyrightText: © 2021 Lee McCuller <mcculler@mit.edu>
+# NOTICE: authors should document their contributions in concisely in NOTICE
+# with details inline in source files, comments, and docstrings.
 """
 """
-from __future__ import division, print_function, unicode_literals
-
-import os
-from os import path
-
-import declarative
-import matplotlib as mpl
-import matplotlib.pyplot as plt
 import numpy as np
 
-#from http://godsnotwheregodsnot.blogspot.com/2012/09/color-distribution-methodology.html
-
+# generated from http://godsnotwheregodsnot.blogspot.com/2012/09/color-distribution-methodology.html
 color_array  = np.array([
     [1   , 0   , 103],  # 0
     [158 , 0   , 142],  # 1

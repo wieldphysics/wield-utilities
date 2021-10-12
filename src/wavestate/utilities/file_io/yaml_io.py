@@ -1,12 +1,16 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: © 2021 Massachusetts Institute of Technology.
+# SPDX-FileCopyrightText: © 2021 Lee McCuller <mcculler@mit.edu>
+# NOTICE: authors should document their contributions in concisely in NOTICE
+# with details inline in source files, comments, and docstrings.
 """
 """
-from __future__ import division, print_function, unicode_literals
 import collections
 import sys
 import re
 import yaml
-from declarative.utilities.future_from_2 import unicode
 
 
 def yaml_load(fname):
@@ -37,7 +41,9 @@ def yaml_load(fname):
 def dict_representer(dumper, data):
     return dumper.represent_dict(data.iteritems())
 
+
 yaml.SafeDumper.add_representer(collections.OrderedDict, dict_representer)
+
 
 def yaml_write(fname, fdict):
     if sys.version_info < (3, 4):

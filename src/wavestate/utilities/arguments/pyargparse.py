@@ -1,9 +1,14 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: © 2021 Massachusetts Institute of Technology.
+# SPDX-FileCopyrightText: © 2021 Lee McCuller <mcculler@mit.edu>
+# NOTICE: authors should document their contributions in concisely in NOTICE
+# with details inline in source files, comments, and docstrings.
 """
 """
-from __future__ import division, print_function, unicode_literals
 import argparse
-from IIRrational.utilities.strings import padding_remove
+from ..utilities.strings import padding_remove
 
 
 def kwdict_argparse(ap, kwdict, groups_kw = dict()):
@@ -110,7 +115,7 @@ def kwdict_argparse(ap, kwdict, groups_kw = dict()):
             if not APpositional:
                 apG.add_argument(*APflags, **APkw)
 
-                #add the aliases to parse, but with their help suppressed
+                # add the aliases to parse, but with their help suppressed
                 for aname in hdict.get('aliases', []):
                     APkw['help'] = argparse.SUPPRESS
                     apG.add_argument('--{}'.format(aname), **APkw)

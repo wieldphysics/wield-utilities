@@ -1,11 +1,18 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: © 2021 Massachusetts Institute of Technology.
+# SPDX-FileCopyrightText: © 2021 Lee McCuller <mcculler@mit.edu>
+# NOTICE: authors should document their contributions in concisely in NOTICE
+# with details inline in source files, comments, and docstrings.
 """
 """
-from __future__ import division, print_function, unicode_literals
-import declarative
 import collections
 
-NOARG = declarative.unique_generator
+# unique element to indicate a default argument
+_NOARG = lambda : _NOARG
+NOARG = ("NOARG", _NOARG)
+
 
 def subkey_search(fdict, subkey, default = NOARG):
     if subkey is None:
@@ -35,8 +42,8 @@ def subkey_search(fdict, subkey, default = NOARG):
                 break
         else:
             if default is NOARG:
-                #this is the for-else syntax, only triggered if the for loop never
-                #finds a match
+                # this is the for-else syntax, only triggered if the for loop never
+                # finds a match
                 raise KeyError("Could not recursively find {}".format(subkey))
             else:
                 return default

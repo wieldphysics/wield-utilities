@@ -1,8 +1,13 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: © 2021 Massachusetts Institute of Technology.
+# SPDX-FileCopyrightText: © 2021 Lee McCuller <mcculler@mit.edu>
+# NOTICE: authors should document their contributions in concisely in NOTICE
+# with details inline in source files, comments, and docstrings.
 """
 .. autofunction:: masked_argsort
 """
-from __future__ import division, print_function, unicode_literals
 import numpy as np
 import cmath
 from functools import reduce
@@ -78,8 +83,10 @@ def continuous_phase(data, op_idx= 0, sep = (1.01) * np.pi, deg = False, shiftmo
     where_down = list(np.where(diff < -sep)[0])
     value_mods = []
     shift = 0
+
     def shift_mod(val):
         return ((shiftmod + val) % (2*shiftmod)) - shiftmod
+
     while True:
         if where_up and where_down:
             if where_up[-1] > where_down[-1]:

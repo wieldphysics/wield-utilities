@@ -24,11 +24,12 @@ from .aid import HintAid
 from . import logging
 
 __all__ = [
-    kwdict_argparse,
-    HintAid,
-    ArgumentError,
-    grab_kwargs,
-    grab_kwarg_hints,
-    kw_hints,
-    logging,
+    'ArgumentError',
+    'grab_kwargs',
+    'grab_kwarg_hints',
+    'check_remaining_arguments'
+    'transfer_kw',
+    'kwdict_argparse',
+    'HintAid',
+    'logging',
 ]

@@ -1,4 +1,10 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: © 2021 Massachusetts Institute of Technology.
+# SPDX-FileCopyrightText: © 2021 Lee McCuller <mcculler@mit.edu>
+# NOTICE: authors should document their contributions in concisely in NOTICE
+# with details inline in source files, comments, and docstrings.
 """
 ===========================
 Matplotlib Utility Functions
@@ -32,19 +38,21 @@ def savefig(save_name, size_x_in, size_y_in):
     fig.set_size_inches(size_x_in, size_y_in)
     fig.savefig(save_name)
 
-def hsva_to_rgba(h,s,v,a=1.):
+
+def hsva_to_rgba(h, s, v, a=1.):
     """
     Convert h,s,v into rgb using mpl. The converter of mpl is vectorized, so it is not convenient for
     this operation, this is convenient. Furthermore, this will correctly wrap the h value
     """
 
-    s = min(s,1.)
-    s = max(s,0.)
-    v = min(v,1.)
-    v = max(v,0.)
+    s = min(s, 1.)
+    s = max(s, 0.)
+    v = min(v, 1.)
+    v = max(v, 0.)
     mpl_formatted = np.array([[[h % 1.,s,v]]])
     rgbarray = mpl.colors.hsv_to_rgb(mpl_formatted)[0,0]
     return np.concatenate([rgbarray, [a]])
+
 
 def vertical_stack_optional(ax_list, ax_names, fig = None, autofig = True, share_x = False):
     if autofig and all(ax is None for ax in ax_list):
@@ -61,7 +69,6 @@ def vertical_stack_optional(ax_list, ax_names, fig = None, autofig = True, share
     for name, ax in zip(ax_names, ax_list):
         ax_dict.local_set(name, ax)
     return ax_dict
-
 
 
 class LogLocator2(LogLocator):
@@ -120,8 +127,8 @@ class LogScale2(LogScale):
         axis.set_major_locator(LogLocator2(self.base))
         axis.set_minor_locator(LogLocator2(self.base, self.subs))
 
-mpl.scale.register_scale(LogScale2)
 
+mpl.scale.register_scale(LogScale2)
 
 
 def indexed_cmap(N, cmap = 'hsv', offset = 0):
@@ -129,6 +136,8 @@ def indexed_cmap(N, cmap = 'hsv', offset = 0):
     RGB color.'''
     color_norm  = colors.Normalize(vmin=0, vmax=N)
     scalar_map = cmx.ScalarMappable(norm=color_norm, cmap=cmap)
+
     def map_index_to_rgb_color(index):
         return scalar_map.to_rgba(index + offset)
+
     return map_index_to_rgb_color

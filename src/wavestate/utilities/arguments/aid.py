@@ -5,12 +5,12 @@
 # SPDX-FileCopyrightText: © 2021 Lee McCuller <mcculler@mit.edu>
 # NOTICE: authors should document their contributions in concisely in NOTICE
 # with details inline in source files, comments, and docstrings.
+"""
+"""
 import sys
 import time
 import logging
-
 import contextlib
-import declarative
 
 from ..utilities.strings import padding_remove
 
@@ -86,8 +86,8 @@ class HintAid(object):
 
         for key in superarg:
             key = key.format(**kwargs)
-            ret = self.hints.get(key, declarative.NOARG)
-            if ret is not declarative.NOARG:
+            ret = self.hints.get(key, NOARG)
+            if ret is not NOARG:
                 return ret
         return kwargs['default']
 
@@ -276,3 +276,7 @@ class HintAid(object):
         if self.log_header_printed > len(save_stack):
             self.log_header_printed = len(save_stack)
 
+
+# unique element to indicate a default argument
+_NOARG = lambda : _NOARG
+NOARG = ("NOARG", _NOARG)

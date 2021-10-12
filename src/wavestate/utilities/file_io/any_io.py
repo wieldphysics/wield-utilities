@@ -1,4 +1,10 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: © 2021 Massachusetts Institute of Technology.
+# SPDX-FileCopyrightText: © 2021 Lee McCuller <mcculler@mit.edu>
+# NOTICE: authors should document their contributions in concisely in NOTICE
+# with details inline in source files, comments, and docstrings.
 """
 Some notes about writing/reading a common dictionary format across these files:
 Some of the issues can only be resolved by code-side normalization functions.
@@ -11,7 +17,6 @@ Only dictionaries and arrays of numbers should be supported
    could/should be reversed on load, but currently requires code normalization
    to reverse
 """
-from __future__ import division, print_function, unicode_literals
 import collections
 import numpy as np
 import copy
@@ -22,6 +27,7 @@ from . import types
 def load_any(
         fname,
         ftype,
+        special = None,
 ):
     if ftype == 'hdf5':
         from . import hdf5_io
@@ -42,12 +48,9 @@ def load_any(
         from . import matlab_io
         fdict = matlab_io.load_matlab(fname)
     elif ftype == 'special':
-        try:
-            import transient_test_data
-            testing_data = IIRrational_test_data.testing_data_dev
-        except (ImportError, AttributeError):
-            from ..testing import testing_data
-        fdict = testing_data(fname)
+        if special is None:
+            raise NotImplementedError("special data type not supported")
+        fdict = special(fname)
     else:
         raise RuntimeError("Unsupported filetype")
     return fdict
@@ -91,7 +94,7 @@ def normalize_ndarray(obj):
     elif isinstance(obj, np.ndarray):
         return obj
     elif isinstance(obj, np.generic):
-        #captures scalars given the previous if
+        # captures scalars given the previous if
         return np.asscalar(obj)
     elif isinstance(obj, (list, tuple)):
         return np.asarray(obj)

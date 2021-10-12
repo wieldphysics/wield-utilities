@@ -1,8 +1,12 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: © 2021 Massachusetts Institute of Technology.
+# SPDX-FileCopyrightText: © 2021 Lee McCuller <mcculler@mit.edu>
+# NOTICE: authors should document their contributions in concisely in NOTICE
+# with details inline in source files, comments, and docstrings.
 """
 """
-from __future__ import division, print_function, unicode_literals
-
 import warnings
 import os
 import contextlib
@@ -15,6 +19,8 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 import numpy as np
 
 from .colors import color_array
+
+from wavestate.bunch import Bunch
 
 try:
     org_mode
@@ -83,7 +89,7 @@ def mpl_autorasterize(fig):
                 if len(p.vertices) > 100:
                     child.set_rasterized(True)
                     child.set_antialiased(True)
-                    #print(child, len(xdat))
+                    # print(child, len(xdat))
         except AttributeError:
             pass
 
@@ -159,13 +165,13 @@ class AutoPlotSaver(declarative.OverridableObject):
             fig = fig_or_fbunch.fig
 
             formats = fig_or_fbunch.get("formats", None)
-            #the "get" method unwraps the deepbunch
+            # the "get" method unwraps the deepbunch
             formats = declarative.DeepBunch(formats)
             if not formats:
                 formats = self.formats
 
             save_show    = fig_or_fbunch.get("save_show", None)
-            #and needed since show may be empty DeepBunch
+            # and needed since show may be empty DeepBunch
             if not save_show and save_show is not False:
                 save_show = self.save_show
 
@@ -179,17 +185,17 @@ class AutoPlotSaver(declarative.OverridableObject):
             new_h = float(h)/float(w) * new_w
             fig.set_size_inches(new_w, new_h)
 
-        #this silly bit reduces the formats to only the one specified
+        # this silly bit reduces the formats to only the one specified
         fbase, fext = path.splitext(fbasename)
         if fext:
             fbasename = fbase
-            #cut off the dot
+            # cut off the dot
             fext = fext[1:]
             single_formats = declarative.DeepBunch()
-            #apply any settings stored in this object or the plot itself
+            # apply any settings stored in this object or the plot itself
             single_formats[fext].update_recursive(self.formats[fext])
             single_formats[fext].update_recursive(formats[fext])
-            #force usage of this single format!
+            # force usage of this single format!
             single_formats[fext].use = True
             formats = single_formats
 
@@ -215,7 +221,7 @@ class AutoPlotSaver(declarative.OverridableObject):
         used_png = False
         for fmt, fB in formats.items():
             if fmt == 'png' and (org_mode or self.org_subfolder):
-                #to avoide the elif
+                # to avoide the elif
                 pass
             elif not fB.use:
                 continue
@@ -233,7 +239,7 @@ class AutoPlotSaver(declarative.OverridableObject):
                     fbasename + '.' + fmt,
                     dpi = dpi,
                     bbox_inches = 'tight',
-                    #tight_layout=True,
+                    # tight_layout=True,
                     pad_inches = 0.05,
                     transparent=True,
                     quality = 50,
@@ -254,7 +260,7 @@ class AutoPlotSaver(declarative.OverridableObject):
                             pad_inches    = 0.05,
                             transparent   = True,
                             quality       = 50,
-                            #tight_layout =True,
+                            # tight_layout =True,
                             **kwargs
                         ),
                     )
@@ -270,9 +276,9 @@ class AutoPlotSaver(declarative.OverridableObject):
                     try:
                         import IPython.display
                         import time
-                        #IPython.display.display(IPython.display.Image(filename=fname, embed=False))
-                        #html_bit = '<img src="{1}/../{0}?{1}">'.format(fname, int(time.time()))
-                        #IPython.display.display(IPython.display.HTML(html_bit))
+                        # IPython.display.display(IPython.display.Image(filename=fname, embed=False))
+                        # html_bit = '<img src="{1}/../{0}?{1}">'.format(fname, int(time.time()))
+                        # IPython.display.display(IPython.display.HTML(html_bit))
                         ftype_md = []
                         for fmt, fB in formats.items():
                             if fB.use or fmt == 'png':
@@ -361,7 +367,7 @@ def mplfigB(
     if height_in is None:
         height_in = size_in_base_H + Nrows * size_in_dW_dH[1]
 
-    axB = declarative.Bunch()
+    axB = Bunch()
     axB.fig = plt.figure()
     axB.fig.set_size_inches(width_in, height_in)
     attach_finalizer(axB)
@@ -390,7 +396,7 @@ def mplfigB(
                 ax.set_prop_cycle(
                     color = prop_cycle
                 )
-            #patch_axes(ax)
+            # patch_axes(ax)
             ax_list.append(ax)
             ax.grid(b=True)
             ax.grid(b=True, which = 'minor', color = (.9, .9, .9), lw = .5)
@@ -415,10 +421,12 @@ def mplfigB(
 def attach_finalizer(ax):
     ax.finalizers = []
     ax.finalized = False
+
     def finalize():
         ax.finalized = True
         for f in ax.finalizers:
             f()
+
     ax.finalize = finalize
     return
 
