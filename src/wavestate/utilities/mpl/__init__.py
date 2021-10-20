@@ -10,6 +10,8 @@
 
 from .utils import *
 
+from ..np import logspaced
+
 from .autoniceplot import (
     AutoPlotSaver,
     asavefig,

@@ -10,7 +10,7 @@
 import matplotlib as mpl
 from matplotlib import gridspec
 import matplotlib.pyplot as plt
-import declarative
+from wavestate import declarative
 
 from .autoniceplot import (
     asavefig,

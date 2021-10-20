@@ -12,7 +12,6 @@ import os
 import contextlib
 from os import path
 
-import declarative
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
@@ -20,7 +19,8 @@ import numpy as np
 
 from .colors import color_array
 
-from wavestate.bunch import Bunch
+from wavestate.bunch import Bunch, DeepBunch
+from wavestate.declarative import OverridableObject
 
 try:
     org_mode
@@ -39,7 +39,7 @@ def save_figure_MP(fig, fname, *args, **kwargs):
     return fig.savefig(fname, *args, **kwargs)
 
 
-class SaveToken(declarative.OverridableObject):
+class SaveToken(OverridableObject):
     aps = None
     fbasename = None
     kwargs = {}
@@ -94,7 +94,7 @@ def mpl_autorasterize(fig):
             pass
 
 
-class AutoPlotSaver(declarative.OverridableObject):
+class AutoPlotSaver(OverridableObject):
     max_width_in = None
     max_height_in = None
     save_dpi = 400
@@ -104,7 +104,7 @@ class AutoPlotSaver(declarative.OverridableObject):
 
     rasterize_auto = True
 
-    formats = declarative.DeepBunch()
+    formats = DeepBunch()
     formats.pdf.use          = True
     formats.jpg.use          = False
     formats.jpg.dpi          = 200
@@ -166,7 +166,7 @@ class AutoPlotSaver(declarative.OverridableObject):
 
             formats = fig_or_fbunch.get("formats", None)
             # the "get" method unwraps the deepbunch
-            formats = declarative.DeepBunch(formats)
+            formats = DeepBunch(formats)
             if not formats:
                 formats = self.formats
 
@@ -191,7 +191,7 @@ class AutoPlotSaver(declarative.OverridableObject):
             fbasename = fbase
             # cut off the dot
             fext = fext[1:]
-            single_formats = declarative.DeepBunch()
+            single_formats = DeepBunch()
             # apply any settings stored in this object or the plot itself
             single_formats[fext].update_recursive(self.formats[fext])
             single_formats[fext].update_recursive(formats[fext])

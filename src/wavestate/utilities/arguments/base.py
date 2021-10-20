@@ -7,7 +7,7 @@
 # with details inline in source files, comments, and docstrings.
 """
 """
-import declarative
+from wavestate import declarative
 import numpy as np
 
 from ..utilities import args
