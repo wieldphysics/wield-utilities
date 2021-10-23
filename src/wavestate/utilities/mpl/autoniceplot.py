@@ -45,17 +45,21 @@ class SaveToken(OverridableObject):
     kwargs = {}
 
     def __lshift__(self, other):
-        self.aps(self.fbasename, fig_or_fbunch = other, **self.kwargs)
+        self.aps(self.fbasename, fig_or_fbunch=other, **self.kwargs)
         return other
+
     def __rlshift__(self, other):
-        self.aps(self.fbasename, fig_or_fbunch = other, **self.kwargs)
+        self.aps(self.fbasename, fig_or_fbunch=other, **self.kwargs)
         return other
+
     def __rshift__(self, other):
-        self.aps(self.fbasename, fig_or_fbunch = other, **self.kwargs)
+        self.aps(self.fbasename, fig_or_fbunch=other, **self.kwargs)
         return other
+
     def __rrshift__(self, other):
-        self.aps(self.fbasename, fig_or_fbunch = other, **self.kwargs)
+        self.aps(self.fbasename, fig_or_fbunch=other, **self.kwargs)
         return other
+
 
 def mpl_autorasterize(fig):
     children_current = fig.get_children()
@@ -105,26 +109,27 @@ class AutoPlotSaver(OverridableObject):
     rasterize_auto = True
 
     formats = DeepBunch()
-    formats.pdf.use          = True
-    formats.jpg.use          = False
-    formats.jpg.dpi          = 200
+    formats.pdf.use = True
+    formats.jpg.use = False
+    formats.jpg.dpi = 200
     formats.jpg.facecolorize = True
     formats.png.facecolorize = True
-    formats.png.use          = False
+    formats.png.use = False
 
-    embed     = False
+    embed = False
     save_show = True
-    fixname   = False
-    _pool     = None
+    fixname = False
+    _pool = None
 
     _last_async_result = None
 
     @contextlib.contextmanager
-    def pool(self, workers = 4):
+    def pool(self, workers=4):
         """
         runs the plot save in a contextmanager and waits for the plotting to be done simultaneously
         """
         import multiprocessing
+
         wasnone = False
         if self._pool is None:
             if workers > 1:
@@ -144,18 +149,18 @@ class AutoPlotSaver(OverridableObject):
             asavefig._last_async_result = None
 
     def __call__(
-            self,
-            fbasename,
-            fig_or_fbunch = None,
-            fixname = None,
+        self,
+        fbasename,
+        fig_or_fbunch=None,
+        fixname=None,
     ):
 
         if fig_or_fbunch is None:
             return SaveToken(
-                aps = self,
-                fbasename = fbasename,
-                kwargs = dict(
-                    fixname = fixname,
+                aps=self,
+                fbasename=fbasename,
+                kwargs=dict(
+                    fixname=fixname,
                 ),
             )
 
@@ -170,7 +175,7 @@ class AutoPlotSaver(OverridableObject):
             if not formats:
                 formats = self.formats
 
-            save_show    = fig_or_fbunch.get("save_show", None)
+            save_show = fig_or_fbunch.get("save_show", None)
             # and needed since show may be empty DeepBunch
             if not save_show and save_show is not False:
                 save_show = self.save_show
@@ -182,7 +187,7 @@ class AutoPlotSaver(OverridableObject):
         w, h = fig.get_size_inches()
         if self.max_width_in is not None and w > self.max_width_in:
             new_w = self.max_width_in
-            new_h = float(h)/float(w) * new_w
+            new_h = float(h) / float(w) * new_w
             fig.set_size_inches(new_w, new_h)
 
         # this silly bit reduces the formats to only the one specified
@@ -202,14 +207,16 @@ class AutoPlotSaver(OverridableObject):
         if self.rasterize_auto:
             mpl_autorasterize(fig)
 
-        subfolder = ''
+        subfolder = ""
         if self.org_subfolder:
             subfolder = self.org_subfolder
 
         fbasepath, fbasefname = path.split(fbasename)
-        if '_' in fbasefname and fixname:
-            warnings.warn("Image name contains '_' which will be changed to '-' to fix nbsphinx export")
-            fbasefname = fbasefname.replace('_', '-')
+        if "_" in fbasefname and fixname:
+            warnings.warn(
+                "Image name contains '_' which will be changed to '-' to fix nbsphinx export"
+            )
+            fbasefname = fbasefname.replace("_", "-")
             fbasename = path.join(fbasepath, fbasename)
 
         fbasename = path.join(subfolder, fbasename)
@@ -220,12 +227,12 @@ class AutoPlotSaver(OverridableObject):
         global org_mode
         used_png = False
         for fmt, fB in formats.items():
-            if fmt == 'png' and (org_mode or self.org_subfolder):
+            if fmt == "png" and (org_mode or self.org_subfolder):
                 # to avoide the elif
                 pass
             elif not fB.use:
                 continue
-            if fmt == 'png':
+            if fmt == "png":
                 used_png = True
             if fB.dpi:
                 dpi = fB.dpi
@@ -233,16 +240,16 @@ class AutoPlotSaver(OverridableObject):
                 dpi = self.save_dpi
             kwargs = dict()
             if fB.facecolorize:
-                kwargs['facecolor'] = fig.get_facecolor()
+                kwargs["facecolor"] = fig.get_facecolor()
             if self._pool is None:
                 fig.savefig(
-                    fbasename + '.' + fmt,
-                    dpi = dpi,
-                    bbox_inches = 'tight',
+                    fbasename + "." + fmt,
+                    dpi=dpi,
+                    bbox_inches="tight",
                     # tight_layout=True,
-                    pad_inches = 0.05,
+                    pad_inches=0.05,
                     transparent=True,
-                    quality = 50,
+                    quality=50,
                     **kwargs
                 )
             else:
@@ -250,16 +257,16 @@ class AutoPlotSaver(OverridableObject):
                 self._last_async_result.append(
                     self._pool.apply_async(
                         save_figure_MP,
-                        args          = (
+                        args=(
                             fig,
-                            os.path.join(mydir, fbasename + '.' + fmt),
+                            os.path.join(mydir, fbasename + "." + fmt),
                         ),
-                        kwds = dict(
-                            dpi           = dpi,
-                            bbox_inches   = 'tight',
-                            pad_inches    = 0.05,
-                            transparent   = True,
-                            quality       = 50,
+                        kwds=dict(
+                            dpi=dpi,
+                            bbox_inches="tight",
+                            pad_inches=0.05,
+                            transparent=True,
+                            quality=50,
                             # tight_layout =True,
                             **kwargs
                         ),
@@ -267,7 +274,7 @@ class AutoPlotSaver(OverridableObject):
                 )
 
         if used_png:
-            fname = fbasename + '.png'
+            fname = fbasename + ".png"
             if org_mode:
                 print("figure: {0}".format(fname))
                 print("[[file:{0}]]".format(fname))
@@ -276,23 +283,27 @@ class AutoPlotSaver(OverridableObject):
                     try:
                         import IPython.display
                         import time
+
                         # IPython.display.display(IPython.display.Image(filename=fname, embed=False))
                         # html_bit = '<img src="{1}/../{0}?{1}">'.format(fname, int(time.time()))
                         # IPython.display.display(IPython.display.HTML(html_bit))
                         ftype_md = []
                         for fmt, fB in formats.items():
-                            if fB.use or fmt == 'png':
+                            if fB.use or fmt == "png":
                                 md = "[{ftype}]({fbasename}.{ftype})".format(
-                                    ftype = fmt,
-                                    fbasename = fbasename
+                                    ftype=fmt, fbasename=fbasename
                                 )
                                 ftype_md.append(md)
                         markdown_bit = '![{fbasename}]({0}?{1} "{fbasename}")'.format(
                             fname,
                             int(time.time()),
-                            fbasename = fbasename,
+                            fbasename=fbasename,
                         )
-                        IPython.display.display(IPython.display.Markdown(markdown_bit + "\n" + ",  ".join(ftype_md)))
+                        IPython.display.display(
+                            IPython.display.Markdown(
+                                markdown_bit + "\n" + ",  ".join(ftype_md)
+                            )
+                        )
                         plt.close(fig)
                     except ImportError:
                         pass
@@ -303,18 +314,23 @@ class AutoPlotSaver(OverridableObject):
                     try:
                         import IPython.display
                         import time
-                        IPython.display.display(IPython.display.Image("{0}".format(fname)))
+
+                        IPython.display.display(
+                            IPython.display.Image("{0}".format(fname))
+                        )
                         plt.close(fig)
                     except ImportError:
                         pass
                 else:
                     plt.close(fig)
-        fig.set_dpi(mpl.rcParams['figure.dpi'])
+        fig.set_dpi(mpl.rcParams["figure.dpi"])
         return
+
 
 asavefig = AutoPlotSaver()
 
-def patchify_axes(ax, plotname, check_log_Y = False):
+
+def patchify_axes(ax, plotname, check_log_Y=False):
     oldplot = getattr(ax, plotname)
 
     def plot(X, Y, *args, **kwargs):
@@ -327,24 +343,27 @@ def patchify_axes(ax, plotname, check_log_Y = False):
         if b.shape != Y.shape:
             Y = np.ones(X.shape) * Y
         return oldplot(X, Y, *args, **kwargs)
+
     plot.__name__ = oldplot.__name__
-    plot.__doc__  = oldplot.__doc__
+    plot.__doc__ = oldplot.__doc__
     setattr(ax, plotname, plot)
 
+
 def patch_axes(ax):
-    patchify_axes(ax, 'plot')
-    patchify_axes(ax, 'loglog', check_log_Y = True)
-    patchify_axes(ax, 'semilogy', check_log_Y = True)
-    patchify_axes(ax, 'semilogx')
+    patchify_axes(ax, "plot")
+    patchify_axes(ax, "loglog", check_log_Y=True)
+    patchify_axes(ax, "semilogy", check_log_Y=True)
+    patchify_axes(ax, "semilogx")
+
 
 def mplfigB(
-        Nrows         = 1,
-        Ncols         = 1,
-        size_in       = (None, None),
-        size_in_base  = (None, None),
-        size_in_dW_dH = (3, 1),
-        x_by_col      = False,
-        prop_cycle    = None,
+    Nrows=1,
+    Ncols=1,
+    size_in=(None, None),
+    size_in_base=(None, None),
+    size_in_dW_dH=(3, 1),
+    x_by_col=False,
+    prop_cycle=None,
 ):
     if isinstance(Nrows, (list, tuple)):
         rownames = Nrows
@@ -356,10 +375,10 @@ def mplfigB(
     size_in_base_W, size_in_base_H = size_in_base
 
     if size_in_base_W is None:
-        size_in_base_W = mpl.rcParams['figure.figsize'][0]
+        size_in_base_W = mpl.rcParams["figure.figsize"][0]
 
     if size_in_base_H is None:
-        size_in_base_H = mpl.rcParams['figure.figsize'][1]
+        size_in_base_H = mpl.rcParams["figure.figsize"][1]
 
     if width_in is None:
         width_in = size_in_base_W + Ncols * size_in_dW_dH[0]
@@ -373,9 +392,11 @@ def mplfigB(
     attach_finalizer(axB)
 
     global asavefig
+
     def save(rootname, **kwargs):
         axB.finalize()
         axB << asavefig(rootname, **kwargs)
+
     axB.save = save
 
     N = 0
@@ -391,15 +412,15 @@ def mplfigB(
                     sharex = None
             else:
                 sharex = None
-            ax = axB.fig.add_subplot(Nrows, Ncols, idx_row*Ncols + idx_col + 1, sharex = sharex)
+            ax = axB.fig.add_subplot(
+                Nrows, Ncols, idx_row * Ncols + idx_col + 1, sharex=sharex
+            )
             if prop_cycle is not None:
-                ax.set_prop_cycle(
-                    color = prop_cycle
-                )
+                ax.set_prop_cycle(color=prop_cycle)
             # patch_axes(ax)
             ax_list.append(ax)
             ax.grid(b=True)
-            ax.grid(b=True, which = 'minor', color = (.9, .9, .9), lw = .5)
+            ax.grid(b=True, which="minor", color=(0.9, 0.9, 0.9), lw=0.5)
             axB.ax_grid_colrow[idx_col].append(ax)
             axB["ax{0}_{1}".format(idx_row, idx_col)] = ax
             axB["ax{0}".format(N)] = ax
@@ -411,10 +432,10 @@ def mplfigB(
             if idx_col == 0:
                 if idx_row == 0:
                     axB.ax_top = ax
-                if idx_row == Nrows-1:
+                if idx_row == Nrows - 1:
                     axB.ax_bottom = ax
-                axB['ax_list']   = ax_list
-        axB['ax_list_{0}'.format(idx_col)]    = ax_list
+                axB["ax_list"] = ax_list
+        axB["ax_list_{0}".format(idx_col)] = ax_list
     return axB
 
 
@@ -429,5 +450,6 @@ def attach_finalizer(ax):
 
     ax.finalize = finalize
     return
+
 
 asavefig = AutoPlotSaver()

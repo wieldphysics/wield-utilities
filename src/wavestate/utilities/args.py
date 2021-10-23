@@ -10,15 +10,20 @@
 """
 from collections.abc import Mapping
 
+
 def argscan(*args, **kwargs):
     """
     The attibute name must be given as keyword argument "arg". Giving the name
     allows it to be looked-up in the argument dictionary or locals().
     """
-    argname = kwargs.get('arg', None)
+    argname = kwargs.get("arg", None)
     for val in args:
         if val is REQ:
-            raise TypeError("Argument {0} is required and must be supplied to above function".format(argname))
+            raise TypeError(
+                "Argument {0} is required and must be supplied to above function".format(
+                    argname
+                )
+            )
         elif (argname is not None) and isinstance(val, Mapping):
             m_arg = val.get(argname, UNSPEC)
             if m_arg is not UNSPEC:
@@ -28,6 +33,7 @@ def argscan(*args, **kwargs):
     # return the last value, likely None or the loop would have returned it
     return val
 
+
 # Special unique value to specify that arguments are required or not yet specified
-REQ    = (argscan, 'REQUIRED')
-UNSPEC = (argscan, 'UNSPECIFIED')
+REQ = (argscan, "REQUIRED")
+UNSPEC = (argscan, "UNSPECIFIED")

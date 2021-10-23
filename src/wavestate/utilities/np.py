@@ -69,13 +69,15 @@ def interval_limit(X_min, X_max, X, *Y):
     X_idx = np.where((X >= X_min) & (X <= X_max))
     return (X[X_idx],) + tuple(np.asarray(y)[X_idx] for y in Y)
 
+
 def masked_argsort(m_array):
     """
     Runs argsort on a masked array and only returns the argsort of the unmasked items
     """
-    return np.argsort(m_array)[:sum(~m_array.mask)]
+    return np.argsort(m_array)[: sum(~m_array.mask)]
 
-def continuous_phase(data, op_idx= 0, sep = (1.01) * np.pi, deg = False, shiftmod = 2):
+
+def continuous_phase(data, op_idx=0, sep=(1.01) * np.pi, deg=False, shiftmod=2):
     raw_angle = np.angle(data)
     diff = np.diff(raw_angle)
     sep = abs(sep)
@@ -85,7 +87,7 @@ def continuous_phase(data, op_idx= 0, sep = (1.01) * np.pi, deg = False, shiftmo
     shift = 0
 
     def shift_mod(val):
-        return ((shiftmod + val) % (2*shiftmod)) - shiftmod
+        return ((shiftmod + val) % (2 * shiftmod)) - shiftmod
 
     while True:
         if where_up and where_down:
@@ -103,13 +105,13 @@ def continuous_phase(data, op_idx= 0, sep = (1.01) * np.pi, deg = False, shiftmo
             where = where_down.pop()
         else:
             break
-        value_mods.append((where+1, shift * 2 * np.pi))
+        value_mods.append((where + 1, shift * 2 * np.pi))
 
     if not value_mods:
-        if np.average(raw_angle) < -np.pi/4:
+        if np.average(raw_angle) < -np.pi / 4:
             raw_angle += np.pi * 2
         if deg:
-            raw_angle *= 180./np.pi
+            raw_angle *= 180.0 / np.pi
         return raw_angle
 
     full_shift = np.empty_like(raw_angle)
@@ -124,17 +126,18 @@ def continuous_phase(data, op_idx= 0, sep = (1.01) * np.pi, deg = False, shiftmo
     raw_angle -= full_shift
     raw_angle += full_shift[op_idx]
     while raw_angle[op_idx] < -np.pi:
-        raw_angle += 2*np.pi
+        raw_angle += 2 * np.pi
     while raw_angle[op_idx] > np.pi:
-        raw_angle -= 2*np.pi
+        raw_angle -= 2 * np.pi
 
-    median = np.sort(raw_angle)[len(raw_angle)/2]
-    if median < -np.pi/4:
+    median = np.sort(raw_angle)[len(raw_angle) / 2]
+    if median < -np.pi / 4:
         raw_angle += np.pi * 2
 
     if deg:
-        raw_angle *= 180./np.pi
+        raw_angle *= 180.0 / np.pi
     return raw_angle
+
 
 def logspaced(lower, upper, n_points):
     """
@@ -144,9 +147,11 @@ def logspaced(lower, upper, n_points):
     log_upper = np.log(upper)
     return np.exp(np.linspace(log_lower, log_upper, int(n_points)))
 
+
 def common_type(nd_array):
     nd_flat = np.asanyarray(nd_array).flatten()
     return reduce(type_reduce, nd_flat, nd_flat[0].__class__)
+
 
 def type_reduce(type_A, obj_B):
     if type_A is None or obj_B is None:
@@ -157,6 +162,7 @@ def type_reduce(type_A, obj_B):
         return obj_B.__class__
     return None
 
+
 def argsort(array):
     """
     Highly efficient argsort for pure python, this is also good for
@@ -165,19 +171,21 @@ def argsort(array):
     return sorted(list(range(len(array))), key=array.__getitem__)
 
 
-def mag_phase_signed(v, deg = True):
-    ang = (np.angle(v, deg = False) + np.pi * 9./4) % np.pi - np.pi/4.
+def mag_phase_signed(v, deg=True):
+    ang = (np.angle(v, deg=False) + np.pi * 9.0 / 4) % np.pi - np.pi / 4.0
     mag = v * np.exp(-1j * ang)
     if deg:
         ang = 180 / np.pi * ang
     return np.real(mag), ang
 
-def group_delay(F, data, mult = 3e8):
-    dang = np.convolve([1, -1], np.angle(data), mode='valid')
-    dang[dang > 1 * np.pi] -= 2*np.pi
-    dang[dang < -1 * np.pi] += 2*np.pi
-    dF = np.convolve([1, -1], F, mode='valid')
-    return F[-len(dang):], mult * dang/dF
+
+def group_delay(F, data, mult=3e8):
+    dang = np.convolve([1, -1], np.angle(data), mode="valid")
+    dang[dang > 1 * np.pi] -= 2 * np.pi
+    dang[dang < -1 * np.pi] += 2 * np.pi
+    dF = np.convolve([1, -1], F, mode="valid")
+    return F[-len(dang) :], mult * dang / dF
+
 
 def first_non_NaN(arr):
     idx_lower = 0
@@ -190,7 +198,7 @@ def first_non_NaN(arr):
             if N == 1:
                 return idx_lower + 1
             else:
-                idx_lower = idx_lower + N/2
+                idx_lower = idx_lower + N / 2
                 idx_upper = idx_lower + N
                 N = 1
         else:
@@ -200,7 +208,7 @@ def first_non_NaN(arr):
 
 def search_local_sorted_orig(arr_x, arr_y, val_x_start, val_y):
     idx_start = np.searchsorted(arr_x, val_x_start)
-    dval_y_start = arr_y[idx_start+1] - arr_y[idx_start]
+    dval_y_start = arr_y[idx_start + 1] - arr_y[idx_start]
     idx_upper = idx_start
     idx_lower = idx_start
     if dval_y_start > 0:
@@ -223,7 +231,7 @@ def search_local_sorted_orig(arr_x, arr_y, val_x_start, val_y):
             if idx_lower == -1:
                 break
         idx_lower += 1
-        idx_offset = np.searchsorted(arr_y[idx_lower : idx_upper], val_y)
+        idx_offset = np.searchsorted(arr_y[idx_lower:idx_upper], val_y)
     else:
         prev = arr_y[idx_start]
         while True:
@@ -244,7 +252,7 @@ def search_local_sorted_orig(arr_x, arr_y, val_x_start, val_y):
             if idx_lower == -1:
                 break
         idx_lower += 1
-        idx_offset = -1 - np.searchsorted(arr_y[idx_lower : idx_upper][::-1], val_y)
+        idx_offset = -1 - np.searchsorted(arr_y[idx_lower:idx_upper][::-1], val_y)
 
     idx = idx_lower + idx_offset
     sub_idx = (val_y - arr_y[idx]) / (arr_y[idx + 1] - arr_y[idx])
@@ -258,13 +266,13 @@ def search_local_sorted(arr_x, arr_y, val_x_start, val_y):
     ddval_y = dval_y[1:] ^ dval_y[:-1]
     idx_convex = np.concatenate([[0], np.nonzero(ddval_y)[0], [len(arr_x)]])
     idx_split = np.searchsorted(idx_convex, idx_start)
-    idx_lower = idx_convex[idx_split-1]
+    idx_lower = idx_convex[idx_split - 1]
     idx_upper = idx_convex[idx_split]
 
-    if arr_y[idx_upper-1] > arr_y[idx_lower]:
-        idx_offset = np.searchsorted(arr_y[idx_lower : idx_upper], val_y)
+    if arr_y[idx_upper - 1] > arr_y[idx_lower]:
+        idx_offset = np.searchsorted(arr_y[idx_lower:idx_upper], val_y)
     else:
-        idx_offset = -1 - np.searchsorted(arr_y[idx_lower : idx_upper][::-1], val_y)
+        idx_offset = -1 - np.searchsorted(arr_y[idx_lower:idx_upper][::-1], val_y)
 
     idx = idx_lower + idx_offset
     sub_idx = (val_y - arr_y[idx]) / (arr_y[idx + 1] - arr_y[idx])
@@ -272,21 +280,18 @@ def search_local_sorted(arr_x, arr_y, val_x_start, val_y):
     return frac_x, idx, sub_idx
 
 
-def generate_sections(
-    barray,
-    reconnect_length = None
-):
-    Dbarray = (barray[1:] ^ barray[:-1])
+def generate_sections(barray, reconnect_length=None):
+    Dbarray = barray[1:] ^ barray[:-1]
     args = np.argwhere(Dbarray).T[0, :] + 1
     pargs = []
     if barray[0]:
         pargs.append([0])
     pargs.append(args)
     if barray[-1]:
-        pargs.append([len(barray)-1])
+        pargs.append([len(barray) - 1])
     if len(pargs) > 1:
         args = np.concatenate(pargs)
-    assert(len(args) % 2 == 0)
+    assert len(args) % 2 == 0
     sections = list(zip(args[::2], args[1::2]))
     if (len(sections) > 0) and (reconnect_length is not None):
         disconnects = [sections[0][0]]
@@ -299,6 +304,7 @@ def generate_sections(
         disconnects.append(sections[-1][-1])
         sections = list(zip(disconnects[0::2], disconnects[1::2]))
     return sections
+
 
 def generate_antisections(idx_start, idx_end, sections):
     if not sections:
@@ -319,7 +325,7 @@ def generate_antisections(idx_start, idx_end, sections):
     return list(zip(disconnects[0::2], disconnects[1::2]))
 
 
-def matrix_stack(arr, dtype = None, **kwargs):
+def matrix_stack(arr, dtype=None, **kwargs):
     """
     This routing allows one to construct 2D matrices out of heterogeneously
     shaped inputs. it should be called with a list, of list of np.array objects
@@ -346,7 +352,7 @@ def matrix_stack(arr, dtype = None, **kwargs):
     vals = []
     dtypes = []
     for r_idx, row in enumerate(arr):
-        assert(len(row) == Ncols)
+        assert len(row) == Ncols
         for c_idx, kdm in enumerate(row):
             kdm = np.asarray(kdm)
             vals.append(kdm)
@@ -359,7 +365,7 @@ def matrix_stack(arr, dtype = None, **kwargs):
     if len(bc.shape) == 0:
         return np.array(arr)
 
-    Marr = np.empty(bc.shape + (Nrows, Ncols), dtype = dtype, **kwargs)
+    Marr = np.empty(bc.shape + (Nrows, Ncols), dtype=dtype, **kwargs)
 
     for r_idx, row in enumerate(arr):
         for c_idx, kdm in enumerate(row):
@@ -379,11 +385,11 @@ def broadcast_deep(mlist):
     bc = None
     while idx < len(mlist):
         if idx == 0 or bc.shape == ():
-            v = mlist[idx:idx+32]
+            v = mlist[idx : idx + 32]
             bc = np.broadcast(*v)
             idx += 32
         else:
-            v = mlist[idx:idx+31]
+            v = mlist[idx : idx + 31]
             # including bc breaks broadcast unless shape is not trivial
             bc = np.broadcast(bc, *v)
             idx += 31
@@ -408,7 +414,7 @@ def broadcast_shapes(shapes):
             return nlist[0]
         nlist = []
         for idx in range((len(blist) + 31) // 32):
-            bc = np.broadcast(*blist[idx * 32 : (idx+1)*32])
+            bc = np.broadcast(*blist[idx * 32 : (idx + 1) * 32])
             nlist.append(bc)
     return nlist[0].shape
 
