@@ -95,7 +95,7 @@ def table(
             exrow.extend(transform(v) for v in row)
             rows.append(exrow)
 
-    if minwidth is not None:
+    if minwidth is not None and rows:
         arr_table = np.array(rows, dtype=object)[:, -len(headers) :]
         widths = []
         for idx in range(arr_table.shape[1]):
