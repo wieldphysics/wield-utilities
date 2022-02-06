@@ -10,29 +10,29 @@
 import collections
 
 # unique element to indicate a default argument
-_NOARG = lambda : _NOARG
+_NOARG = lambda: _NOARG
 NOARG = ("NOARG", _NOARG)
 
 
-def subkey_search(fdict, subkey, default = NOARG):
+def subkey_search(fdict, subkey, default=NOARG):
     if subkey is None:
         return fdict
     subdict = fdict
-    skeys = subkey.split('.')
+    skeys = subkey.split(".")
 
     while skeys:
         if not isinstance(subdict, collections.Mapping):
             raise TypeError("Intermediate type not a dictionary")
 
         try:
-            subdict = subdict['.'.join(skeys)]
+            subdict = subdict[".".join(skeys)]
         except KeyError:
             pass
         else:
             break
 
         for idx in range(1, len(skeys)):
-            semikey = '.'.join(skeys[:-idx])
+            semikey = ".".join(skeys[:-idx])
             try:
                 subdict = subdict[semikey]
             except KeyError:
@@ -48,4 +48,3 @@ def subkey_search(fdict, subkey, default = NOARG):
             else:
                 return default
     return subdict
-

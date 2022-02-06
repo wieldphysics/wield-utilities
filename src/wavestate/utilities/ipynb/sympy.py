@@ -13,11 +13,12 @@ from wavestate.utilities.ipynb.sympy import *
 ```
 """
 import sympy
+
 print("Sympy version: ", sympy.__version__)
 
 
 # this makes the notebook nice
-sympy.init_printing(use_latex='mathjax')
+sympy.init_printing(use_latex="mathjax")
 
 
 from IPython.display import (
@@ -32,5 +33,3 @@ from IPython.display import (
     clear_output,
     Latex,
 )
-
-

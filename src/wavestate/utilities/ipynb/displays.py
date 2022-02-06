@@ -13,6 +13,7 @@ from wavestate.utilities.ipynb.displays import *
 ```
 """
 import IPython
+
 _ip = IPython.get_ipython()
 
 if _ip is not None:
@@ -22,6 +23,7 @@ if _ip is not None:
     # if this is run from the console then inline can't be found. This hack seems to get around it
     try:
         import ipykernel.pylab.backend_inline
+
         backend = ipykernel.pylab.backend_inline.InlineBackend.instance()
         backend.rc.clear()
 
@@ -58,7 +60,7 @@ from IPython.display import (
     Markdown,
 )
 
-#for more options in mpl
+# for more options in mpl
 import wavestate.utilities.mpl
 
 from wavestate.utilities.mpl.utils import (
@@ -84,9 +86,10 @@ except ImportError:
     pass
 
 
-def setup_auto_savefig(ipynb_name, check_warn = False):
+def setup_auto_savefig(ipynb_name, check_warn=False):
     from os import path
-    new =  path.splitext(ipynb_name)[0] + '-ipynb'
+
+    new = path.splitext(ipynb_name)[0] + "-ipynb"
     asavefig.org_subfolder = new
 
 

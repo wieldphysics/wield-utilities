@@ -23,23 +23,27 @@ def yaml_load(fname):
     # of the parser that recognize scientific notation appropriately.
     yaml_loader = yaml.SafeLoader
     yaml_loader.add_implicit_resolver(
-        'tag:yaml.org,2002:float',
-        re.compile('''^(?:
+        "tag:yaml.org,2002:float",
+        re.compile(
+            """^(?:
         [-+]?(?:[0-9][0-9_]*)\\.[0-9_]*(?:[eE][-+]?[0-9]+)?
         |[-+]?(?:[0-9][0-9_]*)(?:[eE][-+]?[0-9]+)
         |\\.[0-9_]+(?:[eE][-+][0-9]+)?
         |[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\\.[0-9_]*
         |[-+]?\\.(?:inf|Inf|INF)
-        |\\.(?:nan|NaN|NAN))$''', re.X),
-        list('-+0123456789.'))
+        |\\.(?:nan|NaN|NAN))$""",
+            re.X,
+        ),
+        list("-+0123456789."),
+    )
 
-    with open(fname, 'r') as F:
+    with open(fname, "r") as F:
         fdict = yaml.load(F, Loader=yaml_loader)
     return fdict
 
 
 def dict_representer(dumper, data):
-    return dumper.represent_dict(data.iteritems())
+    return dumper.represent_dict(data.items())
 
 
 yaml.SafeDumper.add_representer(collections.OrderedDict, dict_representer)
@@ -47,8 +51,8 @@ yaml.SafeDumper.add_representer(collections.OrderedDict, dict_representer)
 
 def yaml_write(fname, fdict):
     if sys.version_info < (3, 4):
-        with open(fname, 'w') as F:
-            yaml.safe_dump(fdict, F)
+        with open(fname, "w") as F:
+            yaml.safe_dump(fdict, F, default_flow_style=None)
     else:
-        with open(fname, 'w', encoding = 'utf8') as F:
-            yaml.safe_dump(fdict, F)
+        with open(fname, "w", encoding="utf8") as F:
+            yaml.safe_dump(fdict, F, default_flow_style=None)
