@@ -18,6 +18,7 @@ Only dictionaries and arrays of numbers should be supported
    to reverse
 """
 import collections
+from collections import abc
 import numpy as np
 import copy
 
@@ -63,7 +64,7 @@ def load_any(
 
 
 def cull_None(obj):
-    if isinstance(obj, collections.Mapping):
+    if isinstance(obj, abc.Mapping):
         dels = []
         for k, v in obj.items():
             v2 = cull_None(v)
@@ -94,7 +95,7 @@ def cull_None(obj):
 
 
 def normalize_ndarray(obj):
-    if isinstance(obj, collections.Mapping):
+    if isinstance(obj, abc.Mapping):
         for k, v in obj.items():
             obj[k] = normalize_ndarray(v)
         return obj
@@ -110,7 +111,7 @@ def normalize_ndarray(obj):
 
 def fix_complex(obj):
     normalize_ndarray(obj)
-    if isinstance(obj, collections.Mapping):
+    if isinstance(obj, abc.Mapping):
         for k, v in obj.items():
             obj[k] = fix_complex(v)
         return obj
@@ -147,7 +148,7 @@ def fix_complex(obj):
 
 
 def fix_ndarray(obj):
-    if isinstance(obj, collections.Mapping):
+    if isinstance(obj, abc.Mapping):
         for k, v in obj.items():
             obj[k] = fix_ndarray(v)
         return obj
