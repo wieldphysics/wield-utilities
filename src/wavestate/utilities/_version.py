@@ -8,7 +8,7 @@
 """
 """
 
-version_info = (0, 9, 0, "dev0")
+version_info = (0, 9, 1, "dev0")
 version = ".".join(str(v) for v in version_info)
 __version__ = version
 
