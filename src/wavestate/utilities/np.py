@@ -372,6 +372,50 @@ def matrix_stack(arr, dtype=None, **kwargs):
     return Marr
 
 
+def vector_stack(arr, dtype=None, **kwargs):
+    """
+    This routing allows one to construct 1D matrices out of heterogeneously
+    shaped inputs. it should be called with a list, of list of np.array objects
+    The outer two lists will form the 2D matrix in the last two axis, and the
+    internal arrays will be broadcasted to allow the array construction to
+    succeed
+
+    example
+
+    matrix_stack([
+        [np.linspace(1, 10, 10)],
+        [2]
+    ])
+
+    will create an array with shape (10, 2, 2), even though the 0, and 2
+    elements usually must be the same shape as the inputs to an array.
+
+    This allows using the matrix-multiply "@" operator for many more
+    constructions, as it multiplies only in the last-two-axis. Similarly,
+    np.linalg.inv() also inverts only in the last two axis.
+    """
+    Nrows = len(arr)
+    vals = []
+    dtypes = []
+    for r_idx, rVal in enumerate(arr):
+        rVal = np.asarray(rVal)
+        vals.append(rVal)
+        dtypes.append(rVal.dtype)
+
+    if dtype is None:
+        dtype = np.result_type(*vals)
+    bc = broadcast_deep(vals)
+
+    if len(bc.shape) == 0:
+        return np.array(arr)
+
+    Marr = np.empty(bc.shape + (Nrows, ), dtype=dtype, **kwargs)
+
+    for r_idx, rVal in enumerate(arr):
+        Marr[..., r_idx] = rVal
+    return Marr
+
+
 def broadcast_deep(mlist):
     """
     Performs the same operation as np.broadcast, but does not use *args
