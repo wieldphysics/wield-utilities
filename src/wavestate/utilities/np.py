@@ -359,12 +359,12 @@ def matrix_stack(arr, dtype=None, **kwargs):
 
     if dtype is None:
         dtype = np.result_type(*vals)
-    bc = broadcast_deep(vals)
+    bc = broadcast_shapes(vals)
 
-    if len(bc.shape) == 0:
+    if len(bc) == 0:
         return np.array(arr)
 
-    Marr = np.empty(bc.shape + (Nrows, Ncols), dtype=dtype, **kwargs)
+    Marr = np.empty(bc + (Nrows, Ncols), dtype=dtype, **kwargs)
 
     for r_idx, row in enumerate(arr):
         for c_idx, kdm in enumerate(row):
@@ -404,12 +404,12 @@ def vector_stack(arr, dtype=None, **kwargs):
 
     if dtype is None:
         dtype = np.result_type(*vals)
-    bc = broadcast_deep(vals)
+    bc = broadcast_shapes(vals)
 
-    if len(bc.shape) == 0:
+    if len(bc) == 0:
         return np.array(arr)
 
-    Marr = np.empty(bc.shape + (Nrows, ), dtype=dtype, **kwargs)
+    Marr = np.empty(bc + (Nrows, ), dtype=dtype, **kwargs)
 
     for r_idx, rVal in enumerate(arr):
         Marr[..., r_idx] = rVal
@@ -423,43 +423,29 @@ def broadcast_deep(mlist):
     long lists (rather than be limited by 32). The partial ordering on
     dtype broadcasting allows this algorithm to be recursive.
     """
-    # do a huge, deep broadcast of all values
-    idx = 0
-    bc = None
-    while idx < len(mlist):
-        if idx == 0 or bc.shape == ():
-            v = mlist[idx : idx + 32]
-            bc = np.broadcast(*v)
-            idx += 32
-        else:
-            v = mlist[idx : idx + 31]
-            # including bc breaks broadcast unless shape is not trivial
-            bc = np.broadcast(bc, *v)
-            idx += 31
-    return bc
+    bc = broadcast_shapes(mlist)
+    return [np.broadcast_to(m, bc) for m in mlist]
 
 
-def broadcast_shapes(shapes):
+def broadcast_shapes(mlist):
     """
     Finds the common shape of a list of arrays, such that broadcasting into
     that shape will succeed.
     """
-    nd = np.array([1])
-
-    nlist = [np.broadcast_to(nd, shape) for shape in shapes if shape != ()]
-    if not nlist:
-        return ()
-
-    while len(nlist) > 1:
-        blist = [np.broadcast_to(nd, bc.shape) for bc in nlist if bc.shape != ()]
-        if not blist:
-            # then they must all be null shapes
-            return nlist[0]
-        nlist = []
-        for idx in range((len(blist) + 31) // 32):
-            bc = np.broadcast(*blist[idx * 32 : (idx + 1) * 32])
-            nlist.append(bc)
-    return nlist[0].shape
+    # do a huge, deep broadcast of all values
+    idx = 0
+    bc = None
+    while idx < len(mlist):
+        if idx == 0 or bc == ():
+            v = mlist[idx : idx + 32]
+            bc = np.broadcast_shapes(*[_.shape for _ in v])
+            idx += 32
+        else:
+            v = mlist[idx : idx + 31]
+            # including bc breaks broadcast unless shape is not trivial
+            bc = np.broadcast_shapes(bc, *[_.shape for _ in v])
+            idx += 31
+    return bc
 
 
 def matrix_stack_id(arr, **kwargs):

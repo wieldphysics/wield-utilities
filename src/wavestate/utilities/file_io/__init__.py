@@ -25,6 +25,7 @@ from .types import (
 
 from .utilities import (
     subkey_search,
+    load_ls,
 )
 
 
@@ -59,4 +60,5 @@ __all__ = [
     "subkey_search",
     "save",
     "load",
+    "load_ls",
 ]

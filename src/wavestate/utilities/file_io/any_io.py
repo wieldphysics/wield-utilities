@@ -30,6 +30,9 @@ def load_any(
     ftype,
     special=None,
 ):
+    features = types.type2features[ftype]
+    fdict_orig = None
+
     if ftype == "hdf5":
         from . import hdf5_io
 
@@ -60,6 +63,12 @@ def load_any(
         fdict = special(fname)
     else:
         raise RuntimeError("Unsupported filetype")
+
+    if not features["complex"]:
+        if fdict_orig is None:
+            fdict_orig = fdict
+            fdict = copy.deepcopy(fdict)
+        fix_complex_read(fdict)
     return fdict
 
 
@@ -109,41 +118,64 @@ def normalize_ndarray(obj):
     return obj
 
 
-def fix_complex(obj):
+def fix_complex_write(obj):
     normalize_ndarray(obj)
     if isinstance(obj, abc.Mapping):
         for k, v in obj.items():
-            obj[k] = fix_complex(v)
+            obj[k] = fix_complex_write(v)
         return obj
     elif isinstance(obj, np.ndarray):
         if np.iscomplexobj(obj):
             objD = collections.OrderedDict()
-            objD["real"] = obj.real
-            objD["imag"] = obj.imag
-            objD["__type__"] = "[complex]"
-            obj = objD
-            return obj
+            objD['<type>'] = 'complex'
+            objD['<'] = list([str(o) for o in obj])
+            return objD
         elif obj.dtype == object:
             for idx, v in np.ndenumerate(obj):
-                obj[idx] = fix_complex(v)
+                obj[idx] = fix_complex_write(v)
             return obj
         else:
             return obj
     elif isinstance(obj, list):
         for idx, v in enumerate(obj):
-            obj[idx] = fix_complex(v)
+            obj[idx] = fix_complex_write(v)
         return obj
     elif isinstance(obj, tuple):
         obj2 = [None] * len(obj)
         for idx, v in enumerate(obj):
-            obj2[idx] = fix_complex(v)
+            obj2[idx] = fix_complex_write(v)
         return tuple(obj2)
     elif isinstance(obj, complex):
         objD = collections.OrderedDict()
-        objD["real"] = obj.real
-        objD["imag"] = obj.imag
-        objD["__type__"] = "[complex]"
+        objD['<type>'] = 'complex'
+        objD['<'] = str(obj)
         obj = objD
+    return obj
+
+
+def fix_complex_read(obj):
+    if isinstance(obj, abc.Mapping):
+        type_attr = obj.get('<type>', None)
+        if type_attr == 'complex':
+            val = obj['<']
+            if isinstance(val, list):
+                val = [complex(v) for v in val]
+                return val
+            else:
+                return complex(val)
+        for k, v in obj.items():
+            obj[k] = fix_complex_read(v)
+        return obj
+    elif isinstance(obj, list):
+        for idx, v in enumerate(obj):
+            obj[idx] = fix_complex_read(v)
+        return obj
+    elif isinstance(obj, tuple):
+        obj2 = [None] * len(obj)
+        for idx, v in enumerate(obj):
+            obj2[idx] = fix_complex_read(v)
+        return tuple(obj2)
+    normalize_ndarray(obj)
     return obj
 
 
@@ -189,7 +221,7 @@ def write_any(
         if fdict_orig is None:
             fdict_orig = fdict
             fdict = copy.deepcopy(fdict)
-        fix_complex(fdict)
+        fix_complex_write(fdict)
 
     if not features["ndarray"]:
         if fdict_orig is None:
