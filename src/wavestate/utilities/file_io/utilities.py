@@ -25,7 +25,7 @@ def subkey_search(fdict, subkey, default=NOARG):
     skeys = subkey.split(".")
 
     while skeys:
-        if not isinstance(subdict, collections.Mapping):
+        if not isinstance(subdict, collections.abc.Mapping):
             raise TypeError("Intermediate type not a dictionary")
 
         try:
@@ -82,7 +82,7 @@ def dump_fdict_keys(d, k=None, depth=-1, file=sys.stdout):
     """
     """
     subprint = False
-    if isinstance(d, collections.Mapping):
+    if isinstance(d, collections.abc.Mapping):
         if k is not None:
             print("{}{}:".format("  " * depth, k), file=file)
         for subk, v in sorted(d.items()):
