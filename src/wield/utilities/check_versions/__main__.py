@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 # SPDX-License-Identifier: Apache-2.0
 # SPDX-FileCopyrightText: © 2021 Massachusetts Institute of Technology.
+# SPDX-FileCopyrightText: © 2023 California Institute of Technology.
 # SPDX-FileCopyrightText: © 2021 Lee McCuller <mcculler@caltech.edu>
 # NOTICE: authors should document their contributions in concisely in NOTICE
 # with details inline in source files, comments, and docstrings.
@@ -10,7 +11,11 @@
 This tool checks for consistency between the git repository tag, the _version.py file
 in the module, and the version defined in setup.cfg.
 
-This tool expects to be one directory up from the setup.cfg.
+This tool should be called from the directory containing setup.cfg
+
+Call it using
+
+python wield.utilities.check_versions
 """
 import os
 import sys
@@ -21,17 +26,21 @@ import re
 from pkg_resources import parse_version
 from packaging.version import LegacyVersion
 
-fpath = os.path.dirname(os.path.abspath(__file__))
+# previous version used the file path for this
+# fpath = os.path.dirname(os.path.abspath(__file__))
 config = configparser.ConfigParser()
 
+setupcfg_fpath = "setup.cfg"
+setupcfg_path = os.path.split(os.path.abspath(setupcfg_fpath))[0]
+
 # look for setup.cfg one directory up
-config.read(os.path.join(fpath, "..", "setup.cfg"))
+config.read(setupcfg_fpath)
 version_string = config["metadata"]["version"]
 modfile = config["tools.check_versions"]["version_file"]
 
 # import the specified file as the 'version' module
 spec = importlib.util.spec_from_file_location(
-    "version", os.path.join(fpath, "..", modfile)
+    "version", os.path.join(setupcfg_path, modfile)
 )
 module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(module)
