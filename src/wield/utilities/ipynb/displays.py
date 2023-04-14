@@ -9,7 +9,7 @@
 this is indended to set up notebooks a particular way using
 
 ```python
-from wavestate.utilities.ipynb.displays import *
+from wield.utilities.ipynb.displays import *
 ```
 """
 import IPython
@@ -61,13 +61,13 @@ from IPython.display import (
 )
 
 # for more options in mpl
-import wavestate.utilities.mpl
+import wield.utilities.mpl
 
-from wavestate.utilities.mpl.utils import (
+from wield.utilities.mpl.utils import (
     indexed_cmap,
 )
 
-from wavestate.utilities.mpl import (
+from wield.utilities.mpl import (
     AutoPlotSaver,
     mplfigB,
     asavefig,

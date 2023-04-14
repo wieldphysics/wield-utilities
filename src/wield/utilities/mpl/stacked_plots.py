@@ -10,7 +10,7 @@
 import matplotlib as mpl
 from matplotlib import gridspec
 import matplotlib.pyplot as plt
-from wavestate.bunch import DeepBunch
+from wield.bunch import DeepBunch
 
 from .autoniceplot import (
     asavefig,

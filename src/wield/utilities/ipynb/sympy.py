@@ -9,7 +9,7 @@
 this is indended to set up notebooks a particular way using
 
 ```python
-from wavestate.utilities.ipynb.sympy import *
+from wield.utilities.ipynb.sympy import *
 ```
 """
 import sympy

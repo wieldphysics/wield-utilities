@@ -19,8 +19,8 @@ import numpy as np
 
 from .colors import color_array
 
-from wavestate.bunch import Bunch, DeepBunch
-from wavestate.declarative import OverridableObject
+from wield.bunch import Bunch, DeepBunch
+from wield.declarative import OverridableObject
 
 try:
     org_mode
