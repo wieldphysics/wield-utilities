@@ -220,16 +220,15 @@ def write_any(
     #     fdict = copy.deepcopy(fdict)
     cull_None(fdict)
     if not features["complex"]:
-        if fdict_orig is None:
-            fdict_orig = fdict
-            # fdict = copy.deepcopy(fdict)
+        # if fdict_orig is None:
+        #     fdict_orig = fdict
+        #     fdict = copy.deepcopy(fdict)
         fix_complex_write(fdict)
 
     if not features["ndarray"]:
         # if fdict_orig is None:
-        if not features["complex"]:
-            fdict_orig = fdict
-            # fdict = copy.deepcopy(fdict)
+        #     fdict_orig = fdict
+        #     fdict = copy.deepcopy(fdict)
         fix_ndarray(fdict)
 
     if ftype == "hdf5":
