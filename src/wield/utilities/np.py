@@ -129,7 +129,7 @@ def continuous_phase(data, op_idx=0, sep=(1.01) * np.pi, deg=False, shiftmod=2):
     while raw_angle[op_idx] > np.pi:
         raw_angle -= 2 * np.pi
 
-    median = np.sort(raw_angle)[len(raw_angle) / 2]
+    median = np.sort(raw_angle)[int(len(raw_angle) / 2)]
     if median < -np.pi / 4:
         raw_angle += np.pi * 2
 
