@@ -11,7 +11,7 @@ import pickle
 
 
 def load_pickle(fname):
-    with open(fname) as F:
+    with open(fname, "rb") as F:
         fdict = pickle.load(F)
     return fdict
 
