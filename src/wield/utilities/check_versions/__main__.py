@@ -24,7 +24,6 @@ import configparser
 import importlib
 import re
 from pkg_resources import parse_version
-from packaging.version import LegacyVersion
 
 # previous version used the file path for this
 # fpath = os.path.dirname(os.path.abspath(__file__))
@@ -79,9 +78,14 @@ def check_versions():
         if "dev" in version_string:
             p_git_tag = parse_version(git_tag)
             # if the version cannot be parsed, then don't check it
-            if isinstance(p_git_tag, LegacyVersion):
-                return exit
-            elif parse_version(git_tag) > parse_version(version_string):
+            try:
+                from packaging.version import LegacyVersion
+                if isinstance(p_git_tag, LegacyVersion):
+                    return exit
+            except ImportError:
+                pass
+
+            if parse_version(git_tag) > parse_version(version_string):
                 print(
                     "WARNING: latex git-tag {} is newer than dev version {}".format(
                         git_tag, version_string
