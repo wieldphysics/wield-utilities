@@ -361,6 +361,7 @@ def mplfigB(
     size_in_base=(None, None),
     size_in_dW_dH=(3, 1),
     x_by_col=False,
+    y_by_row=False,
     prop_cycle=None,
 ):
     if isinstance(Nrows, (list, tuple)):
@@ -410,8 +411,15 @@ def mplfigB(
                     sharex = None
             else:
                 sharex = None
+            if y_by_row:
+                if idx_col != 0:
+                    sharey = axB.ax_grid_colrow[0][idx_row]
+                else:
+                    sharey = None
+            else:
+                sharey = None
             ax = axB.fig.add_subplot(
-                Nrows, Ncols, idx_row * Ncols + idx_col + 1, sharex=sharex
+                Nrows, Ncols, idx_row * Ncols + idx_col + 1, sharex=sharex, sharey=sharey
             )
             if prop_cycle is not None:
                 ax.set_prop_cycle(color=prop_cycle)
